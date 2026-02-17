@@ -1,50 +1,18 @@
-const User = require('../models/User');
+const express = require('express');
+const router = express.Router();
+const { registerUser, loginUser, verify, getUsers, deleteUser, getStats } = require('../controllers/authController');
+const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-exports.loginUser = async (req, res) => {
+// Public routes
+router.post('/login', loginUser);
 
-    try {
+// Protected routes (require authentication)
+router.get('/verify', protect, verify);
+router.get('/users', protect, getUsers);
+router.get('/stats', protect, isAdmin, getStats);
 
-        const { email, password } = req.body;
+// Admin-only routes
+router.post('/register', protect, isAdmin, registerUser);
+router.delete('/users/:id', protect, isAdmin, deleteUser);
 
-        // Find user in MongoDB
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'User not found'
-            });
-        }
-
-        // Check password
-        if (user.password !== password) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid password'
-            });
-        }
-
-        // Login success
-        res.status(200).json({
-            success: true,
-            message: 'Login successful',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            success: false,
-            message: 'Server error'
-        });
-
-    }
-
-};
+module.exports = router;
