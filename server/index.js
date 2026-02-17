@@ -1,71 +1,54 @@
-const express = require("express");
-const cors = require("cors");
-const { MongoClient } = require("mongodb");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const dns = require('dns'); // Added for DNS fix
+
+dotenv.config();
+
+// FIX: Force Google DNS to bypass local resolver issues
+try {
+    dns.setServers(['8.8.8.8', '8.8.4.4']);
+    console.log('Using Google DNS (8.8.8.8) for resolution.');
+} catch (e) {
+    console.warn('Could not set custom DNS:', e.message);
+}
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const client = new MongoClient(process.env.MONGO_URI);
+const PORT = process.env.PORT || 5000;
 
-let db;
+console.log('Connecting to MongoDB...');
 
-client.connect().then(() => {
+mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
+    family: 4 // Force IPv4
+})
+    .then(() => {
+        console.log('MongoDB connected');
+        require('./services/seeder')();
+    })
+    .catch(err => console.error('MongoDB Connection Error:', err));
 
-    db = client.db("neuralnest");
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/meetings', require('./routes/meetings'));
+app.use('/api/attendance', require('./routes/attendance'));
 
-    console.log("MongoDB connected");
-
+app.get('/', (req, res) => {
+    res.send('NeuralNest API is running');
 });
 
-app.post("/api/auth/login", async (req, res) => {
+// Import Cron Jobs
+require('./services/report.service');
 
-    try {
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
-        const { email, password, role } = req.body;
-
-        if (!email || !password || !role) {
-
-            return res.status(400).json({
-                message:
-                    "Email, password, and role required"
-            });
-
-        }
-
-        const user =
-            await db
-                .collection("users")
-                .findOne({
-                    email: email,
-                    password: password,
-                    role: role
-                });
-
-        if (!user) {
-
-            return res.status(401).json({
-                message: "Login failed"
-            });
-
-        }
-
-        res.json({
-            message: "Login success",
-            user: user
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: "Server error"
-        });
-
-    }
-
-});
-
-app.listen(10000, () =>
-    console.log("Server running")
-);
+module.exports = app;
