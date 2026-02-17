@@ -1,18 +1,48 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, verify, getUsers, deleteUser, getStats } = require('../controllers/authController');
-const { protect, isAdmin } = require('../middleware/authMiddleware');
+const mongoose = require('mongoose');
 
-// Public routes
-router.post('/login', loginUser);
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password, role } = req.body;
 
-// Protected routes (require authentication)
-router.get('/verify', protect, verify);
-router.get('/users', protect, getUsers);
-router.get('/stats', protect, isAdmin, getStats);
+        console.log("Login request:", email, role);
 
-// Admin-only routes
-router.post('/register', protect, isAdmin, registerUser);
-router.delete('/users/:id', protect, isAdmin, deleteUser);
+        if (!email || !password || !role) {
+            return res.status(400).json({
+                success: false,
+                message: "Email, password and role required"
+            });
+        }
+
+        const db = mongoose.connection.db;
+
+        const user = await db.collection("users").findOne({
+            email: email,
+            password: password,
+            role: role
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email, password or role"
+            });
+        }
+
+        res.json({
+            success: true,
+            message: "Login successful",
+            user: user
+        });
+
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+});
 
 module.exports = router;
