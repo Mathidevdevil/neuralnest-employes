@@ -1,14 +1,50 @@
-const express = require('express');
-const router = express.Router();
-const { registerUser, loginUser, verify, getUsers, deleteUser, getStats } = require('../controllers/authController');
-const { protect, isAdmin } = require('../middleware/authMiddleware');
+const User = require('../models/User');
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.get('/verify', protect, verify);
-router.get('/users', protect, getUsers);
+exports.loginUser = async (req, res) => {
 
-router.delete('/users/:id', protect, isAdmin, deleteUser);
-router.get('/stats', protect, isAdmin, getStats);
+    try {
 
-module.exports = router;
+        const { email, password } = req.body;
+
+        // Find user in MongoDB
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Check password
+        if (user.password !== password) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid password'
+            });
+        }
+
+        // Login success
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+
+    }
+
+};
