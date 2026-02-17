@@ -1,72 +1,71 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const { MongoClient } = require("mongodb");
-
-dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.MONGO_URI;
-
-const client = new MongoClient(uri);
+const client = new MongoClient(process.env.MONGO_URI);
 
 let db;
 
-// connect database
-async function connectDB() {
-  if (!db) {
-    await client.connect();
-    db = client.db("neuralnest");
-    console.log("MongoDB Connected");
-  }
-}
+client.connect().then(() => {
 
-// LOGIN API
+    db = client.db("neuralnest");
+
+    console.log("MongoDB connected");
+
+});
+
 app.post("/api/auth/login", async (req, res) => {
 
-  await connectDB();
+    try {
 
-  const { email, password, role } = req.body;
+        const { email, password, role } = req.body;
 
-  // check empty
-  if (!email || !password || !role) {
-    return res.status(400).json({
-      success: false,
-      message: "Email, password, and role required"
-    });
-  }
+        if (!email || !password || !role) {
 
-  const user = await db.collection("users").findOne({
-    email: email,
-    password: password,
-    role: role
-  });
+            return res.status(400).json({
+                message:
+                    "Email, password, and role required"
+            });
 
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: "Login failed"
-    });
-  }
+        }
 
-  res.json({
-    success: true,
-    message: "Login success",
-    user: user
-  });
+        const user =
+            await db
+                .collection("users")
+                .findOne({
+                    email: email,
+                    password: password,
+                    role: role
+                });
+
+        if (!user) {
+
+            return res.status(401).json({
+                message: "Login failed"
+            });
+
+        }
+
+        res.json({
+            message: "Login success",
+            user: user
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
 
 });
 
-app.get("/", (req, res) => {
-  res.send("Server working");
-});
-
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
-});
+app.listen(10000, () =>
+    console.log("Server running")
+);
