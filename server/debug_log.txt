@@ -1,0 +1,12 @@
+Starting...
+Connecting...
+Connected.
+Saving...
+Pre-save hook.
+ERROR: TypeError: next is not a function
+    at model.<anonymous> (C:\Users\mathi\Downloads\dashboard\server\test-file-log.js:25:13)
+    at Kareem.execPre (C:\Users\mathi\Downloads\dashboard\server\node_modules\kareem\index.js:68:39)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async model.$__save (C:\Users\mathi\Downloads\dashboard\server\node_modules\mongoose\lib\model.js:371:5)
+    at async model.save (C:\Users\mathi\Downloads\dashboard\server\node_modules\mongoose\lib\model.js:614:5)
+    at async run (C:\Users\mathi\Downloads\dashboard\server\test-file-log.js:31:9)
