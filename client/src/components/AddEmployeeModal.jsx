@@ -27,7 +27,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onUserAdded }) => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/auth/register', formData, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             onUserAdded();

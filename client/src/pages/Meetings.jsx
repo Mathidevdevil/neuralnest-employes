@@ -17,7 +17,7 @@ const Meetings = () => {
 
     const fetchMeetings = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/meetings', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/meetings`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setMeetings(res.data);
@@ -25,7 +25,7 @@ const Meetings = () => {
 
     const fetchUsers = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/auth/users', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/users`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(res.data);
@@ -34,7 +34,7 @@ const Meetings = () => {
     const handleCreateMeeting = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/meetings', newMeeting, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/meetings`, newMeeting, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setIsModalOpen(false);
@@ -47,7 +47,7 @@ const Meetings = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/meetings/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/meetings/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchMeetings();

@@ -26,7 +26,7 @@ const Employees = () => {
     const fetchEmployees = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/auth/users', {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/users`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setEmployees(res.data);
@@ -42,7 +42,7 @@ const Employees = () => {
         if (window.confirm('Are you sure you want to delete this employee?')) {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+                await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/users/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 fetchEmployees();
@@ -107,8 +107,8 @@ const Employees = () => {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${emp.role === 'admin'
-                                                ? 'bg-purple-50 text-purple-700 border-purple-100'
-                                                : 'bg-blue-50 text-blue-700 border-blue-100'
+                                            ? 'bg-purple-50 text-purple-700 border-purple-100'
+                                            : 'bg-blue-50 text-blue-700 border-blue-100'
                                             }`}>
                                             {emp.role.charAt(0).toUpperCase() + emp.role.slice(1)}
                                         </span>

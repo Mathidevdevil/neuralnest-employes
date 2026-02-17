@@ -8,7 +8,7 @@ const EmployeeDashboard = () => {
 
     const handleClockIn = async () => {
         try {
-            await axios.post('http://localhost:5000/api/attendance/clockin', {}, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/attendance/clockin`, {}, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setStatus('Clocked In Successfully');
@@ -19,7 +19,7 @@ const EmployeeDashboard = () => {
 
     const handleClockOut = async () => {
         try {
-            await axios.post('http://localhost:5000/api/attendance/clockout', {}, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/attendance/clockout`, {}, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setStatus('Clocked Out Successfully');

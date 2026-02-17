@@ -17,7 +17,7 @@ const Tasks = () => {
 
     const fetchTasks = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/tasks', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/tasks`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setTasks(res.data);
@@ -26,7 +26,7 @@ const Tasks = () => {
     const fetchUsers = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/auth/users', {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/users`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(res.data);
@@ -38,7 +38,7 @@ const Tasks = () => {
     const handleCreateTask = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/tasks', newTask, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/tasks`, newTask, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setIsModalOpen(false);
@@ -52,7 +52,7 @@ const Tasks = () => {
     const handleStatusUpdate = async (id, currentStatus) => {
         const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
         try {
-            await axios.put(`http://localhost:5000/api/tasks/${id}`, { status: newStatus }, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/tasks/${id}`, { status: newStatus }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchTasks();
@@ -63,7 +63,7 @@ const Tasks = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/tasks/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             fetchTasks();

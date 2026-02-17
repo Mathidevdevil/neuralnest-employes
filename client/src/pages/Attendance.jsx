@@ -13,7 +13,7 @@ const Attendance = () => {
 
     const fetchAttendance = async () => {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/attendance', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/attendance`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setAttendance(res.data);
