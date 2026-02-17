@@ -25,7 +25,8 @@ const Login = () => {
                     ? 'administrator'
                     : 'employee';
 
-            await login(email, password, role);
+           await login(email, password, loginType === "admin" ? "administrator" : "employee");
+
 
             navigate('/dashboard');
 
