@@ -30,16 +30,16 @@ const EmployeeDashboard = () => {
 
     return (
         <div className="space-y-6">
-            <div className="glass-panel p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="glass-panel p-8 flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 transition-colors">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-800">Welcome back, {user?.name}</h2>
-                    <p className="text-gray-500 mt-1">Ready to start your day?</p>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Welcome back, {user?.name}</h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">Ready to start your day?</p>
                 </div>
                 <div className="flex space-x-4">
-                    <button onClick={handleClockIn} className="neuro-btn bg-green-600 hover:bg-green-700 shadow-md shadow-green-200">
+                    <button onClick={handleClockIn} className="neuro-btn bg-green-600 hover:bg-green-700 shadow-md shadow-green-200 dark:shadow-green-900/20">
                         Clock In
                     </button>
-                    <button onClick={handleClockOut} className="neuro-btn bg-red-600 hover:bg-red-700 shadow-md shadow-red-200">
+                    <button onClick={handleClockOut} className="neuro-btn bg-red-600 hover:bg-red-700 shadow-md shadow-red-200 dark:shadow-red-900/20">
                         Clock Out
                     </button>
                 </div>

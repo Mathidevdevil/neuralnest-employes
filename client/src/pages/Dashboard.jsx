@@ -13,13 +13,18 @@ import Profile from './Profile';
 
 const Dashboard = () => {
     const { user } = useAuth();
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
+
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
 
     return (
         <div className="flex h-screen bg-neural-bg text-neural-text overflow-hidden">
-            <Sidebar />
+            <Sidebar isOpen={isMobileSidebarOpen} onClose={() => setIsMobileSidebarOpen(false)} />
             <div className="flex-1 flex flex-col overflow-hidden">
-                <Header title="Dashboard" />
-                <main className="flex-1 overflow-auto p-8">
+                <Header title="Dashboard" onMenuClick={toggleMobileSidebar} />
+                <main className="flex-1 overflow-auto p-4 md:p-8">
                     <Routes>
                         <Route path="/" element={
                             user?.role === 'admin' ? <AdminDashboard /> : <EmployeeDashboard />

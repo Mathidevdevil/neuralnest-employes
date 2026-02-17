@@ -2,15 +2,15 @@
 
 @layer base {
   :root {
-    --color-neural-bg: #f0f4f8;
-    /* Cool Gray / Alice Blueish */
+    --color-neural-bg: #f8fafc;
+    /* Slate 50 - Lighter background */
     --color-neural-card: #ffffff;
     --color-neural-accent: #2563eb;
     /* Royal Blue */
-    --color-neural-text: #0f172a;
-    /* Slate 900 - Darker text */
-    --color-neural-secondary: #475569;
-    /* Slate 600 - Darker secondary */
+    --color-neural-text: #1e293b;
+    /* Slate 800 - Better contrast */
+    --color-neural-secondary: #64748b;
+    /* Slate 500 - Better contrast */
   }
 }
 
@@ -19,12 +19,12 @@
   /* Slate 900 */
   --color-neural-card: #1e293b;
   /* Slate 800 */
-  --color-neural-accent: #6366f1;
-  /* Indigo 500 */
-  --color-neural-text: #f1f5f9;
-  /* Slate 100 */
-  --color-neural-secondary: #94a3b8;
-  /* Slate 400 */
+  --color-neural-accent: #818cf8;
+  /* Indigo 400 - Lighter for better visibility */
+  --color-neural-text: #f8fafc;
+  /* Slate 50 - Better contrast */
+  --color-neural-secondary: #cbd5e1;
+  /* Slate 300 - Better contrast */
 }
 
 @layer base {
@@ -93,5 +93,5 @@
 .neuro-input:focus {
   outline: none;
   border-color: var(--color-neural-accent);
-  ring: 2px solid rgba(79, 70, 229, 0.2);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
 }
