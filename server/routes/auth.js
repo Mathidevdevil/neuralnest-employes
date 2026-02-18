@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
         const user = await db.collection("users").findOne({
             email: email,
             password: password,
-            role: role
+            role: { $regex: new RegExp(`^${role}$`, "i") }
         });
 
         if (!user) {
