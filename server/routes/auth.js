@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+const User = require('../models/User'); // Import User model
+const { registerUser, verify, getUsers, deleteUser, getStats } = require('../controllers/authController');
+const { protect, isAdmin } = require('../middleware/authMiddleware');
+const jwt = require('jsonwebtoken');
 
+// Custom Login Route (Fixed to support Hashed Passwords)
 router.post('/login', async (req, res) => {
     try {
         const { email, password, role } = req.body;
@@ -15,25 +19,44 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        const db = mongoose.connection.db;
-
-        const user = await db.collection("users").findOne({
-            email: email,
-            password: password,
-            role: { $regex: new RegExp(`^${role}$`, "i") }
-        });
+        // 1. Find user by email first
+        const user = await User.findOne({ email });
 
         if (!user) {
+            return res.status(404).json({ success: false, error: "User not found" });
+        }
+
+        // 2. Check role matches
+        // Note: The user's regex check was strict on role, let's keep it simple or stick to their logic?
+        // Simple string comparison is usually enough, but let's be case-insensitive just in case
+        if (user.role.toLowerCase() !== role.toLowerCase()) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email, password or role"
+                message: "Invalid role for this user"
             });
         }
+
+        // 3. Verify Password (using the method from User model)
+        const isMatch = await user.matchPassword(password);
+        if (!isMatch) {
+            return res.status(404).json({ success: false, error: "Wrong Password" });
+        }
+
+        // 4. Generate Token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '30d',
+        });
 
         res.json({
             success: true,
             message: "Login successful",
-            user: user
+            token: token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         });
 
     } catch (error) {
@@ -44,5 +67,14 @@ router.post('/login', async (req, res) => {
         });
     }
 });
+
+// Protected routes (require authentication)
+router.get('/verify', protect, verify);
+router.get('/users', protect, getUsers);
+router.get('/stats', protect, isAdmin, getStats);
+
+// Admin-only routes
+router.post('/register', protect, isAdmin, registerUser);
+router.delete('/users/:id', protect, isAdmin, deleteUser);
 
 module.exports = router;

@@ -4,7 +4,7 @@ const User = require('../models/User');
 const seedUsers = async () => {
     try {
         const adminEmail = 'neuralnest.dev@gmail.com';
-        const adminPassword = '@Mathi292001';
+        const adminPassword = 'neuralnest2026';
 
         // Check if Admin exists
         let admin = await User.findOne({ email: adminEmail });
