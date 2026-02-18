@@ -1,25 +1,138 @@
-const handleSubmit = async (e) => {
-    e.preventDefault();
+import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
-    try {
+const Login = () => {
 
-        // FIX: send role to backend
-        const role =
-            loginType === "admin"
-                ? "Administrator"
-                : "Employee";
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loginType, setLoginType] = useState('employee');
 
-        await login(email, password, role);
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-        navigate('/dashboard');
+    const handleSubmit = async (e) => {
 
-    } catch (err) {
+        e.preventDefault();
 
-        console.error(err);
+        try {
 
-        setError(
-            err.response?.data?.message ||
-            "Login failed"
-        );
-    }
+            // IMPORTANT: Must match MongoDB exactly
+            const role =
+                loginType === 'admin'
+                    ? 'administrator'
+                    : 'employee';
+
+            console.log("Sending login:", email, role);
+
+            await login(email, password, role);
+
+            navigate('/dashboard');
+
+        } catch (err) {
+
+            console.error(err);
+
+            setError(
+                err.response?.data?.message ||
+                'Login failed'
+            );
+
+        }
+
+    };
+
+    return (
+
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+
+            <div className="bg-white p-8 rounded-lg shadow-md w-96">
+
+                <div className="flex justify-center mb-4">
+                    <img src={logo} alt="NeuralNest" className="h-12" />
+                </div>
+
+                <h2 className="text-center text-lg font-semibold mb-4">
+
+                    {loginType === 'admin'
+                        ? 'Administrator Login'
+                        : 'Employee Login'}
+
+                </h2>
+
+                {/* Toggle Buttons */}
+                <div className="flex mb-4">
+
+                    <button
+                        className={`flex-1 p-2 ${
+                            loginType === 'employee'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-200'
+                        }`}
+                        onClick={() => setLoginType('employee')}
+                    >
+                        Employee
+                    </button>
+
+                    <button
+                        className={`flex-1 p-2 ${
+                            loginType === 'admin'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-200'
+                        }`}
+                        onClick={() => setLoginType('admin')}
+                    >
+                        Admin
+                    </button>
+
+                </div>
+
+                {error && (
+                    <p className="text-red-500 text-sm mb-2">
+                        {error}
+                    </p>
+                )}
+
+                <form onSubmit={handleSubmit}>
+
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full p-2 border rounded mb-3"
+                        value={email}
+                        onChange={(e) =>
+                            setEmail(e.target.value)
+                        }
+                        required
+                    />
+
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full p-2 border rounded mb-4"
+                        value={password}
+                        onChange={(e) =>
+                            setPassword(e.target.value)
+                        }
+                        required
+                    />
+
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white p-2 rounded"
+                    >
+                        Login
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    );
 };
+
+export default Login;
